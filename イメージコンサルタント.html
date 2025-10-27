@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>成功するイメージコンサルタントLP（ビジネスウーマン特化版）</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Subtle Gold -->
+    <!-- Application Structure Plan: このSPAは、栃木で働くビジネスウーマンのインサイト（キャリアと女性らしさの両立）に深く寄り添うLP構造を体験できます。基本的なLPフロー（悩み→解決→信頼→行動）は共通ですが、全セクションのコピーと訴求を女性向けに最適化。「悩み」セクションでは女性特有のジレンマを提示し、「サービス」では診断から実践までの一貫したサポートを明示。「お客様の声」で具体的なロールモデルを示すことで、「私にもできるかも」という自己投影を促し、行動（予約）へと導きます。 -->
+    <!-- Visualization & Content Choices: 
+        - 報告情報: ファッションへの意識とビジネス成果（女性版） -> ゴール: 「装い」が女性のキャリアを後押しする論理的根拠を示す -> Viz/手法: インタラクティブな棒グラフ(Chart.js/Canvas) -> インタラクション: ホバーで詳細表示 -> 正当化: 「美しくあること＝ビジネススキル」という新しい価値観をデータで裏付ける。
+        - 報告情報: ビジネスウーマン特有の悩み -> ゴール: ターゲットの深い共感を獲得し、自分事化させる -> Viz/手法: クリックで切り替わる「悩み」と「理想の未来」のカード(HTML/CSS/JS) -> インタラクション: 「悩み」カードクリックで対応する「理想の未来」が表示 -> 正当化: 「キツく見られたくない」「服を選ぶ時間がない」といったリアルな悩みを提示し、変革への期待を高める。
+        - 報告情報: 提供サービスプラン（女性向け） -> ゴール: 具体的で魅力的なサービス内容を提示 -> Viz/手法: タブ切り替え式のパネル(HTML/CSS/JS) -> インタラクション: タブクリックで表示プラン切替 -> 正当化: 「クローゼット診断」「ショッピング同行」など、理論と実践を両立するサポート内容を明確化し、納得感を醸成する。
+        - 報告情報: コンサルティングの具体的な流れ -> ゴール: サービス利用への安心感と期待感を醸成 -> Viz/手法: ステップごとの説明が表示されるプロセス図(HTML/CSS/JS) -> インタラクション: ステップ番号クリックで詳細を表示 -> 正当化: 科学的診断からワードローブ構築までの流れを可視化し、不安を解消する。
+        - 報告情報: よくある質問（女性特有） -> ゴール: 申込み前の最後の障壁を取り除く -> Viz/手法: アコーディオン形式のQ&A(HTML/CSS/JS) -> インタラクション: 質問クリックで回答が開閉 -> 正当化: 「手持ちの服を活かせる？」「子供の行事にも使える？」など、現実的な疑問に答えることで信頼を確立する。
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #FDFBF8;
+            color: #4A4A4A; /* 少し柔らかいダークグレー */
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+        h1, h2, h3, .font-bold {
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .problem-card.active {
+            border-color: #D6A25B; /* エレガントなゴールド */
+            background-color: #FFF;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+        }
+        .solution-text {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .tab-button.active {
+            border-bottom-color: #D6A25B;
+            color: #D6A25B;
+            font-weight: 700;
+        }
+        .tab-button {
+            border-bottom-width: 2px;
+            border-bottom-color: transparent;
+        }
+        .cta-button {
+            background-color: #3f3f46; /* プロフェッショナルなダークグレー */
+            color: #FFFFFF;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 14px 0 rgba(0,0,0,0.1);
+            font-weight: 700;
+        }
+        .cta-button:hover {
+            background-color: #52525b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(0,0,0,0.15);
+        }
+        .hero-bg {
+            background-color: #F8F5F2; /* メインの背景より少し濃いベージュ */
+        }
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            color: #3f3f46;
+            text-align: center;
+        }
+        .section-subtitle {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            color: #D6A25B;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="header" class="bg-white/90 backdrop-blur-lg border-b border-gray-200 sticky-header">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 md:h-20">
+                <div class="flex-shrink-0">
+                    <a href="#" class="text-xl font-bold text-gray-800 tracking-wider">Your Brand Styling</a>
+                </div>
+                <nav class="hidden md:flex md:space-x-8">
+                    <a href="#problem" class="text-gray-600 hover:text-[#D6A25B] transition-colors">こんな悩みは？</a>
+                    <a href="#services" class="text-gray-600 hover:text-[#D6A25B] transition-colors">サービス</a>
+                    <a href="#gallery" class="text-gray-600 hover:text-[#D6A25B] transition-colors">事例</a>
+                    <a href="#testimonials" class="text-gray-600 hover:text-[#D6A25B] transition-colors">お客様の声</a>
+                    <a href="#profile" class="text-gray-600 hover:text-[#D6A25B] transition-colors">プロフィール</a>
+                    <a href="#cta" class="cta-button px-5 py-2 rounded-full text-sm">初回コンサルティング予約</a>
+                </nav>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-700 hover:text-gray-900">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200">
+            <a href="#problem" class="block py-3 px-4 text-base text-gray-700 hover:bg-gray-50">こんな悩みは？</a>
+            <a href="#services" class="block py-3 px-4 text-base text-gray-700 hover:bg-gray-50">サービス</a>
+            <a href="#gallery" class="block py-3 px-4 text-base text-gray-700 hover:bg-gray-50">事例</a>
+            <a href="#testimonials" class="block py-3 px-4 text-base text-gray-700 hover:bg-gray-50">お客様の声</a>
+            <a href="#profile" class="block py-3 px-4 text-base text-gray-700 hover:bg-gray-50">プロフィール</a>
+            <a href="#cta" class="block py-4 px-4 text-base cta-button text-center m-4 rounded-full">初回コンサルティング予約</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="relative py-24 sm:py-32 hero-bg">
+            <div class="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 text-center md:text-left mb-12 md:mb-0">
+                    <h1 class="text-3xl sm:text-5xl md:text-5xl font-bold text-gray-800 leading-tight">
+                        その「装い」が、<br>あなたの価値を語り出す。
+                    </h1>
+                    <p class="mt-6 text-lg sm:text-xl text-gray-600 max-w-2xl font-light leading-relaxed">
+                        栃木で輝く、ビジネスウーマンのためのパーソナルスタイリング。<br>
+                        「理論」と「あなたの個性」を両立させ、<br>
+                        キャリアも人生も、もっと自由に、美しく。
+                    </p>
+                    <a href="#cta" class="mt-10 inline-block cta-button px-8 py-4 rounded-full text-lg">
+                        あなたの「本当の魅力」を発見する
+                    </a>
+                </div>
+                <div class="md:w-1/2 lg:w-2/5">
+               
+                    <img src="/images/top.png" alt="イメージコンサル">
+                </div>
+            </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section id="problem" class="py-20 sm:py-24 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">COMMON PROBLEMS</h2>
+                <p class="section-subtitle">こんなジレンマを抱えていませんか？</p>
+                <div class="max-w-4xl mx-auto">
+                    <p class="text-center text-gray-600 mb-12 font-light leading-relaxed">
+                        キャリアを重ねるほど、「自分らしさ」と「立場にふさわしい装い」のバランスは難しくなるもの。<br>
+                        多くの働く女性が、実は同じ悩みを抱えています。<br>
+                        カードをクリックして、その悩みがどう変わるかご覧ください。
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="problem-card border-2 border-gray-200 p-6 rounded-lg cursor-pointer transition-all duration-300 active" data-problem-id="1">
+                            <span class="text-3xl">👗</span>
+                            <h3 class="font-bold text-lg my-3 text-gray-800">何が似合うかわからない</h3>
+                            <p class="text-sm text-gray-600 font-light">流行を追っても、店員に勧められても、しっくりこない。自分の魅力が活きる「正解」が知りたい。</p>
+                        </div>
+                        <div class="problem-card border-2 border-gray-200 p-6 rounded-lg cursor-pointer transition-all duration-300" data-problem-id="2">
+                            <span class="text-3xl">⚖️</span>
+                            <h3 class="font-bold text-lg my-3 text-gray-800">「品格」と「個性」</h3>
+                            <p class="text-sm text-gray-600 font-light">かっちりし過ぎてキツく見られたくない。でも、緩すぎて軽く見られるのも嫌だ。丁度いいバランスは？</p>
+                        </div>
+                        <div class="problem-card border-2 border-gray-200 p-6 rounded-lg cursor-pointer transition-all duration-300" data-problem-id="3">
+                            <span class="text-3xl">⏳</span>
+                            <h3 class="font-bold text-lg my-3 text-gray-800">朝、服を選ぶ時間がない</h3>
+                            <p class="text-sm text-gray-600 font-light">クローゼットは服で一杯なのに、着る服がない。毎朝の服選びに時間とストレスを感じている。</p>
+                        </div>
+                    </div>
+                    <div class="mt-12 bg-gray-50 p-8 rounded-lg shadow-inner min-h-[160px] flex items-center justify-center">
+                        <div id="solution-container" class="text-center">
+                            <!-- JSで内容が挿入されます -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ★★★ FIX: RE-ADDED DATA/REASON SECTION ★★★ -->
+        <!-- Data/Reason Section -->
+        <section class="py-20 sm:py-24 hero-bg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">FASHION AS SKILL</h2>
+                <p class="section-subtitle">「装い」は、ビジネススキルです。</p>
+                <div class="max-w-4xl mx-auto">
+                    <p class="text-center text-gray-600 mb-12 font-light leading-relaxed">
+                        「センス」は生まれつきのものではなく、理論で習得できる「技術」です。<br>
+                        特に女性にとって、外見への投資はキャリアにおいて明確なリターンを生み出します。<br>
+                        このインタラクティブグラフで、その影響力を確認してください。
+                    </p>
+                    <div class="chart-container">
+                        <canvas id="impressionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ★★★ FIX: RE-ADDED SERVICES SECTION ★★★ -->
+        <!-- Services Section -->
+        <section id="services" class="py-20 sm:py-24 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">OUR SERVICES</h2>
+                <p class="section-subtitle">あなたの魅力を理論で開花させる</p>
+                <div class="max-w-5xl mx-auto">
+                    <p class="text-center text-gray-600 mb-12 font-light leading-relaxed">
+                        科学的な「顔タイプ診断®」「骨格診断」「パーソナルカラー診断」を基に、<br>
+                        あなたの個性とライフスタイルに合わせた、再現性の高いスタイリングをご提案します。
+                    </p>
+                    <div class="flex justify-center border-b border-gray-200 mb-10">
+                        <button class="tab-button text-gray-500 py-3 px-6 text-lg transition-colors active" data-tab-id="1">ベーシックプラン</button>
+                        <button class="tab-button text-gray-500 py-3 px-6 text-lg transition-colors" data-tab-id="2">トータルプラン</button>
+                        <button class="tab-button text-gray-500 py-3 px-6 text-lg transition-colors" data-tab-id="3">プレミアムプラン</button>
+                    </div>
+                    <div id="service-contents">
+                        <!-- JSで内容が挿入されます -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="py-20 sm:py-24 hero-bg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">STYLING GALLERY</h2>
+                <p class="section-subtitle">スタイリング事例</p>
+                <div class="max-w-5xl mx-auto">
+                    <p class="text-center text-gray-600 mb-12 font-light leading-relaxed">
+                        理論に基づいたスタイリングで、お客様はこんなに変わります。<br>
+                        （ここに「お客様の許可を得た」スタイリング後の写真を掲載します）
+                    </p>
+                    <!-- 
+                      ↓↓↓ スタイリング事例の画像 ↓↓↓
+                      上記と同じように、src="..." を「Base64」の長い文字列、または画像のURLに差し替えてください。
+                      alt="..." には「白ジャケットのオフィスカジュアルコーデ」など、具体的な説明を入れるとSEO（検索エンジン対策）にも有効です。
+                    -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                            <!-- 
+                              ↓↓↓ 事例画像（上記と同じ「ImgBB」の方法でURLを取得し、貼り付けてください） 
+                            -->
+                            <img src="/images/Casual Friday.png" alt="カジュアル">
+
+                            <div class="p-4">
+                                <h3 class="font-bold text-lg text-gray-800">Casual Friday</h3>
+                                <p class="text-sm text-gray-600 font-light">リラックス感と信頼感を両立</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                            <!-- 
+                              ↓↓↓ 事例画像（上記と同じ「ImgBB」の方法でURLを取得し、貼り付けてください） 
+                            -->
+                           <img src="https://i.ibb.co/TDKs4QhP/Presentation-Day.png" alt="スーツ" border="0">
+                             <div class="p-4">
+                                <h3 class="font-bold text-lg text-gray-800">Presentation Day</h3>
+                                <p class="text-sm text-gray-600 font-light">説得力を高めるパワースーツ</p>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                            <!-- 
+                              ↓↓↓ 事例画像（上記と同じ「ImgBB」の方法でURLを取得し、貼り付けてください） 
+                            -->
+                            <img src="https://i.ibb.co/0jzbSMHc/Networking-Event.png" alt="ドレス" border="0">
+                             <div class="p-4">
+                                <h3 class="font-bold text-lg text-gray-800">Networking Event</h3>
+                                <p class="text-sm text-gray-600 font-light">華やかさと品格をプラス</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Process Section -->
+        <section id="process" class="py-20 sm:py-24 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">CONSULTING FLOW</h2>
+                <p class="section-subtitle">コンサルティングの流れ</p>
+                <div class="max-w-4xl mx-auto">
+                    <p class="text-center text-gray-600 mb-16 font-light leading-relaxed">
+                        あなたの「軸」を見つけることから、実践的なスタイリングまで。<br>
+                        理論的かつ丁寧にサポートし、最短ルートで「新しいあなた」に出会うお手伝いをします。
+                    </p>
+                    <div class="flex flex-col md:flex-row justify-between items-start space-y-8 md:space-y-0 md:space-x-8">
+                        <div class="w-full md:w-1/3">
+                            <ul class="space-y-4">
+                                <li>
+                                    <button class="step-button w-full text-left p-4 rounded-lg bg-white shadow-md border-l-4 border-[#D6A25B]" data-step-id="1">
+                                        <span class="text-sm font-bold text-[#D6A25B]">STEP 01</span>
+                                        <h4 class="text-lg font-bold text-gray-800 mt-1">カウンセリング＆ヒアリング</h4>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="step-button w-full text-left p-4 rounded-lg bg-white shadow-sm border-l-4 border-gray-200" data-step-id="2">
+                                        <span class="text-sm font-bold text-gray-500">STEP 02</span>
+                                        <h4 class="text-lg font-bold text-gray-800 mt-1">各種診断（カラー・骨格・顔）</h4>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="step-button w-full text-left p-4 rounded-lg bg-white shadow-sm border-l-4 border-gray-200" data-step-id="3">
+                                        <span class="text-sm font-bold text-gray-500">STEP 03</span>
+                                        <h4 class="text-lg font-bold text-gray-800 mt-1">クローゼット診断</h4>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="step-button w-full text-left p-4 rounded-lg bg-white shadow-sm border-l-4 border-gray-200" data-step-id="4">
+                                        <span class="text-sm font-bold text-gray-500">STEP 04</span>
+                                        <h4 class="text-lg font-bold text-gray-800 mt-1">ショッピング同行</h4>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="w-full md:w-2/3 bg-white p-8 rounded-lg shadow-lg min-h-[300px]">
+                            <div id="step-description">
+                                <!-- JSで内容が挿入されます -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="py-20 sm:py-24 hero-bg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">VOICE</h2>
+                <p class="section-subtitle">お客様の声</p>
+                <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                        <div class="flex items-center mb-4">
+                            <!-- ↓↓↓ お客様の写真（ImgBBでURLを取得し、貼り付けてください） ↓↓↓ -->
+                            <img src="https://placehold.co/100x100/F0EAE4/4A4A4A?text=Client+1" alt="お客様（M.S様）の写真" class="w-16 h-16 rounded-full mr-4 object-cover">
+                            <div>
+                                <p class="font-bold text-gray-800">M.S様</p>
+                                <p class="text-sm text-gray-500">（宇都宮市・30代・保険営業）</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 font-light leading-relaxed">
+                            「毎朝の服選びが本当に楽になりました！『似合う』が理論でわかったことで、無駄な買い物がゼロに。クローゼットがスッキリし、心まで軽くなりました。自信を持ってお客様の前に立てるようになり、営業成績も上がった気がします。」
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-lg">
+                         <div class="flex items-center mb-4">
+                            <!-- ↓↓↓ お客様の写真（ImgBBでURLを取得し、貼り付けてください） ↓↓↓ -->
+                            <img src="https://placehold.co/100x100/F0EAE4/4A4A4A?text=Client+2" alt="お客様（K.T様）の写真" class="w-16 h-16 rounded-full mr-4 object-cover">
+                            <div>
+                                <p class="font-bold text-gray-800">K.T様</p>
+                                <p class="text-sm text-gray-500">（小山市・40代・IT企業管理職）</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 font-light leading-relaxed">
+                            「管理職になり、部下の前に立つ服装に悩んでいました。『キツく見られたくない』と相談したところ、色と素材で柔らかさを、デザインで信頼感を出す方法を提案いただき、まさに目から鱗でした。『最近、雰囲気が素敵ですね』と部下から言われ、コミュニケーションも円滑になったと感じています。」
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section -->
+        <section id="profile" class="py-20 sm:py-24 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">PROFILE</h2>
+                <p class="section-subtitle">コンサルタント紹介</p>
+                <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center bg-white p-10 rounded-lg shadow-xl">
+                    <div class="md:w-1/3 text-center mb-6 md:mb-0">
+                        <!-- ↓↓↓ あなたのプロフィール写真（ImgBBでURLを取得し、貼り付けてください） ↓↓↓ -->
+                        <a href="https://ibb.co/fdhMHgwG"><img src="https://i.ibb.co/Dfx4QJ2g/top.jpg" alt="top" border="0"></a>
+                        <h3 class="text-xl font-bold text-gray-800 mt-4">Your Name</h3>
+                        <p class="text-sm text-[#D6A25B] font-bold">パーソナルスタイリスト</p>
+                    </div>
+                    <div class="md:w-2/3 md:pl-10">
+                        <h4 class="text-2xl font-bold text-gray-800 mb-4">なぜ、栃木のビジネスウーマンなのか</h4>
+                        <p class="text-gray-600 font-light leading-relaxed space-y-4">
+                            <span>
+                                私自身、かつては「装い」に悩むビジネスパーソンの一人でした。キャリアと女性らしさの間で揺れ動き、自信を持てない日々。
+                            </span>
+                            <span>
+                                しかし、ファッション理論に出会い、「似合う」を知ることで人生が劇的に変わることを実感しました。「センス」は才能ではなく「技術」であり、それは女性の強力な武器になるのです。
+                            </span>
+                            <span>
+                                この素晴らしい変化を、地元・栃木で頑張るすべての女性に届けたい。あなたの輝くキャリアと人生を、「装い」の力で全力でサポートします。
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="py-20 sm:py-24 hero-bg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="section-title">Q & A</h2>
+                <p class="section-subtitle">よくあるご質問</p>
+                <div class="max-w-3xl mx-auto space-y-4">
+                    <div class="faq-item border-b border-gray-200 pb-4">
+                        <button class="faq-question w-full flex justify-between items-center text-left py-4">
+                            <span class="text-lg font-bold text-gray-800">Q. 手持ちの服を活かしたスタイリングも可能ですか？</span>
+                            <span class="faq-icon text-2xl text-gray-500 font-light">+</span>
+                        </button>
+                        <div class="faq-answer hidden mt-4 pl-4 border-l-2 border-[#D6A25B]">
+                            <p class="text-gray-600 font-light leading-relaxed">
+                                はい、もちろんです。まずはクローゼット診断で「似合う服」と「そうでない服」を仕分けし、お手持ちのアイテムを最大限活かすコーディネートをご提案します。その上で、買い足すべきアイテムを厳選してアドバイスいたします。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="faq-item border-b border-gray-200 pb-4">
+                        <button class="faq-question w-full flex justify-between items-center text-left py-4">
+                            <span class="text-lg font-bold text-gray-800">Q. ハイブランドばかりの提案になりませんか？</span>
+                            <span class="faq-icon text-2xl text-gray-500 font-light">+</span>
+                        </button>
+                        <div class="faq-answer hidden mt-4 pl-4 border-l-2 border-[#D6A25B]">
+                            <p class="text-gray-600 font-light leading-relaxed">
+                                ご安心ください。ご予算やライフスタイルに合わせて、ハイブランドからファストファッション、地元のセレクトショップまで幅広くご提案します。「高価な服＝似合う服」ではありません。ご予算内で最大の効果を出すことを最優先に考えます。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="faq-item border-b border-gray-200 pb-4">
+                        <button class="faq-question w-full flex justify-between items-center text-left py-4">
+                            <span class="text-lg font-bold text-gray-800">Q. 子供の学校行事など、オケージョン対応も相談できますか？</span>
+                            <span class="faq-icon text-2xl text-gray-500 font-light">+</span>
+                        </button>
+                        <div class="faq-answer hidden mt-4 pl-4 border-l-2 border-[#D6A25B]">
+                            <p class="text-gray-600 font-light leading-relaxed">
+                                はい、多くのビジネスウーマンが悩まれる点ですので、ぜひご相談ください。ビジネスシーンだけでなく、保護者会や式典など、TPOに合わせた品格あるスタイリングも得意としています。着回しの効くアイテムをご提案します。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section id="cta" class="py-20 sm:py-24 bg-white text-center">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-800">
+                    まずは、あなたの「可能性」を知ることから。
+                </h2>
+                <p class="mt-6 text-lg text-gray-600 max-w-2xl mx-auto font-light leading-relaxed">
+                    「似合う」を知れば、あなたはもっと輝ける。<br>
+                    初回コンサルティングでは、あなたの魅力と課題を丁寧に分析し、<br>
+                    「新しいあなた」への第一歩をご提案します。
+                </p>
+                <a href="#" class="mt-10 inline-block cta-button px-10 py-5 rounded-full text-xl">
+                    初回コンサルティングを予約する
+                </a>
+                <p class="mt-4 text-sm text-gray-500">（オンライン・対面どちらも可能です）</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-lg font-bold">Your Brand Styling</p>
+            <p class="mt-2 text-sm font-light">栃木県宇都宮市（詳細はご予約時にお伝えします）</p>
+            <div class="flex justify-center space-x-6 mt-4">
+                <a href="#" class="hover:text-white">Instagram</a>
+                <a href="#" class="hover:text-white">Blog</a>
+                <a href="#" class="hover:text-white">Contact</a>
+            </div>
+            <p class="mt-8 text-xs text-gray-400">&copy; 2024 Your Brand Styling. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // Mobile Menu
+            const menuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            // Smooth Scroll for Nav Links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                    if (mobileMenu.classList.contains('hidden') === false) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+            // Sticky Header Change
+            const header = document.getElementById('header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    header.classList.add('bg-white/90', 'backdrop-blur-lg', 'shadow-sm');
+                } else {
+                    header.classList.remove('bg-white/90', 'backdrop-blur-lg', 'shadow-sm');
+                }
+            });
+
+            // Problem Section Interaction
+            const problemCards = document.querySelectorAll('.problem-card');
+            const solutionContainer = document.getElementById('solution-container');
+            const solutions = {
+                1: {
+                    title: '「理論」で、あなたの魅力を100%引き出す',
+                    text: '顔タイプ・骨格・カラー診断で、あなたの体型や雰囲気に本当に似合うスタイルを導き出します。もう「なんとなく」で服を選びません。'
+                },
+                2: {
+                    title: '「信頼感」と「女性らしさ」を両立する',
+                    text: 'ビジネスシーンにふさわしい品格と、あなたらしい個性を両立するスタイリングをご提案。TPOに合わせた絶妙なバランス感覚が身につきます。'
+                },
+                3: {
+                    title: '「戦略的ワードローブ」で、もう悩まない朝へ',
+                    text: '最小限のアイテムで最大限のコーディネートを生み出す「着回し力」を構築。毎朝迷うことなく、自信を持って一日をスタートできます。'
+                }
+            };
+
+            function updateSolution(problemId) {
+                const solution = solutions[problemId];
+                if (solutionContainer) {
+                    solutionContainer.innerHTML = `
+                        <h3 class="text-xl font-bold text-[#D6A25B] mb-3 solution-text">${solution.title}</h3>
+                        <p class="text-gray-600 font-light solution-text">${solution.text}</p>
+                    `;
+                }
+            }
+
+            problemCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    problemCards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    const problemId = card.getAttribute('data-problem-id');
+                    updateSolution(problemId);
+                });
+            });
+            updateSolution('1'); // Initial state
+
+            // Chart.js
+            // ★★★ FIX: CHECK IF ELEMENT EXISTS BEFORE GETTING CONTEXT ★★★
+            const chartCanvas = document.getElementById('impressionChart');
+            if (chartCanvas) {
+                const ctx = chartCanvas.getContext('2d');
+                const impressionChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['信頼感', '説得力', '好感度', 'リーダーシップ', '成約率'],
+                        datasets: [{
+                            label: '外見が整っている場合の影響（%）',
+                            data: [85, 78, 90, 75, 60],
+                            backgroundColor: 'rgba(214, 162, 91, 0.6)',
+                            borderColor: 'rgba(214, 162, 91, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: '「整った外見」がビジネス成果に与える影響',
+                                font: {
+                                    size: 16,
+                                    family: "'Noto Sans JP', sans-serif",
+                                    weight: '700'
+                                },
+                                color: '#4A4A4A'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.dataset.label}: ${context.parsed.y}% 向上`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: function(value) {
+                                        return value + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Services Section Tabs
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const serviceContents = document.getElementById('service-contents');
+            const serviceData = {
+                1: {
+                    title: 'ベーシックプラン：あなたの「似合う軸」を発見',
+                    description: 'まずはご自身の「魅力の軸」を知りたい方向けの基本プラン。各種診断（顔タイプ・骨格・カラー）を丁寧に行い、あなただけの「似合う」を理論的に解説します。',
+                    features: [
+                        'オンラインカウンセリング（60分）',
+                        '各種診断（顔タイプ®・骨格・パーソナルカラー）',
+                        'あなただけの「魅力開花」アドバイスシート（PDF）',
+                        'メイクカラーアドバイス'
+                    ]
+                },
+                2: {
+                    title: 'トータルプラン：理論を「実践」に変える',
+                    description: '「似合う」がわかったら、次はお手持ちの服で実践。クローゼットを拝見し、「似合う服」「手放す服」を仕分け。明日から迷わないコーディネート術をレクチャーします。',
+                    features: [
+                        'ベーシックプランの全内容',
+                        '対面またはオンラインでのクローゼット診断（3時間）',
+                        'お手持ちの服でのコーディネート提案（15パターン以上）',
+                        '買い足しアイテムリスト作成'
+                    ]
+                },
+                3: {
+                    title: 'プレミアムプラン：最高のあなたを「実装」する',
+                    description: '理論から実践、そして「新しい服の購入」までをトータルでサポート。あなたの魅力を最大限に引き出す服を、プロの目線で一緒に選び抜きます。',
+                    features: [
+                        'トータルプランの全内容',
+                        'ショッピング同行（3時間・宇都宮市内）',
+                        '購入アイテムでの着回しアドバイス',
+                        '3ヶ月間のLINEファッション相談サポート'
+                    ]
+                }
+            };
+
+            function updateService(tabId) {
+                const data = serviceData[tabId];
+                // ★★★ FIX: CHECK IF ELEMENT EXISTS ★★★
+                if (serviceContents) {
+                    serviceContents.innerHTML = `
+                        <div class="bg-white p-8 rounded-lg shadow-xl border border-gray-100 animate-fade-in">
+                            <h3 class="text-2xl font-bold text-gray-800 text-center mb-4">${data.title}</h3>
+                            <p class="text-gray-600 text-center mb-8 font-light">${data.description}</p>
+                            <ul class="space-y-3 max-w-md mx-auto">
+                                ${data.features.map(feature => `
+                                    <li class="flex items-center">
+                                        <span class="text-[#D6A25B] text-xl mr-3">✔</span>
+                                        <span class="text-gray-700">${feature}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const tabId = button.getAttribute('data-tab-id');
+                    updateService(tabId);
+                });
+            });
+            // ★★★ FIX: CHECK IF ELEMENT EXISTS ★★★
+            if (tabButtons.length > 0) {
+                updateService('1'); // Initial state
+            }
+
+            // Process Section
+            const stepButtons = document.querySelectorAll('.step-button');
+            const stepDescription = document.getElementById('step-description');
+            const stepData = {
+                1: {
+                    title: 'STEP 01: カウンセリング＆ヒアリング',
+                    text: 'まず、あなたの現在のお悩み、ライフスタイル、なりたい未来のイメージを詳しくお伺いします。ファッションに関するお悩みだけでなく、キャリアプランなどもお聞かせください。ここでゴールを共有することが、成功への第一歩です。'
+                },
+                2: {
+                    title: 'STEP 02: 各種診断（カラー・骨格・顔）',
+                    text: '16タイプ・パーソナルカラー診断®、骨格診断、顔タイプ診断®を行います。ドレープ（布）を当てたり、お顔のパーツバランスを分析したりしながら、あなたの「似合う」を多角的に、かつ理論的に導き出します。'
+                },
+                3: {
+                    title: 'STEP 03: クローゼット診断',
+                    text: 'ご自宅のクローゼットを拝見し、お手持ちのアイテムを「似合う（一軍）」「着回せる（二軍）」「手放す（三軍）」に分類します。一軍アイテムを中心に、具体的なコーディネートをその場で組み立て、写真に撮ってストックしていきます。'
+                },
+                4: {
+                    title: 'STEP 04: ショッピング同行',
+                    text: '事前に下見した宇都宮市内（またはご希望のエリア）のショップで、あなたに本当に似合う服を効率的に試着・購入していきます。似合う理由、着回し方法を解説しながら進めるので、ご自身での「選ぶ力」も身につきます。'
+                }
+            };
+
+            function updateStep(stepId) {
+                const data = stepData[stepId];
+                // ★★★ FIX: CHECK IF ELEMENT EXISTS ★★★
+                if (stepDescription) {
+                    stepDescription.innerHTML = `
+                        <h3 class="text-xl font-bold text-gray-800 mb-4">${data.title}</h3>
+                        <p class="text-gray-600 font-light leading-relaxed">${data.text}</p>
+                    `;
+                }
+            }
+
+            stepButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    stepButtons.forEach(btn => {
+                        btn.classList.remove('border-[#D6A25B]', 'shadow-md');
+                        btn.classList.add('border-gray-200', 'shadow-sm');
+                        btn.querySelector('span').classList.remove('text-[#D6A25B]');
+                        btn.querySelector('span').classList.add('text-gray-500');
+                    });
+                    button.classList.add('border-[#D6A25B]', 'shadow-md');
+                    button.classList.remove('border-gray-200', 'shadow-sm');
+                    button.querySelector('span').classList.add('text-[#D6A25B]');
+                    button.querySelector('span').classList.remove('text-gray-500');
+                    const stepId = button.getAttribute('data-step-id');
+                    updateStep(stepId);
+                });
+            });
+            // ★★★ FIX: CHECK IF ELEMENT EXISTS ★★★
+            if (stepButtons.length > 0) {
+                updateStep('1'); // Initial state
+            }
+
+            // FAQ Accordion
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                const icon = item.querySelector('.faq-icon');
+
+                question.addEventListener('click', () => {
+                    const isOpen = !answer.classList.contains('hidden');
+                    if (isOpen) {
+                        answer.classList.add('hidden');
+                        icon.textContent = '+';
+                    } else {
+                        answer.classList.remove('hidden');
+                        icon.textContent = '−';
+                    }
+                });
+            });
+
+            // Add simple fade-in animation
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes fade-in {
+                    from { opacity: 0; transform: translateY(10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in {
+                    animation: fade-in 0.5s ease-out;
+                }
+            `;
+            document.head.appendChild(style);
+
+        });
+    </script>
+</body>
+</html>
+
+
+
+
